@@ -1,31 +1,43 @@
-// index.js
+// app.js
 const express = require("express");
+const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
 
-// Option A) Serve everything in /public automatically
-app.use(express.static(path.join(__dirname, "public")));
+// Read image into a buffer once at startup
+const imgFile = fs.readFileSync(path.resolve(__dirname, "image.png"));
 
-// Option B) Explicit image route
-// app.get('/image', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'Image.png'), err => {
-//     if (err) res.sendStatus(404);
-//   });
-// });
-
+// ─── Serve the HTML at the root path use path "/" to see
 app.get("/", (req, res) => {
-  res.status(200).type("html").send(`<!DOCTYPE html>
+  // Send back HTML with a 200 status and correct content type
+  res.status(200).type("html");
+  res.send(`<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Express App</title></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
 <body>
-  <h1>Hello World</h1>
-  <img src="/image.png" alt="My Image">
+  <h1>hello world</h1>
+  
 </body>
 </html>`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Listening at http://localhost:${PORT}`);
+// ─── Serve the image at use path "/image" to see /image
+app.get("/image", (req, res) => {
+  //redirect instead of serving directly:
+  // res.redirect(303, 'https://upload.wikimedia.org/.../coffee.JPG');
+
+  // Send the PNG image buffer with proper headers
+  res.status(200).type("png");
+  res.send(imgFile);
+});
+
+// ─── Start listening on port 3000
+const PORT = 3000;
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`Listening on http://127.0.0.1:${PORT}`);
 });
