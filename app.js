@@ -4,9 +4,10 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
+app.use(express.static("."));
 
-// Read image into a buffer once at startup
-const imgFile = fs.readFileSync(path.resolve(__dirname, "image.png"));
+// Read image
+const imgFile = fs.readFileSync("image.png");
 
 // ─── Serve the HTML at the root path use path "/" to see
 app.get("/", (req, res) => {
